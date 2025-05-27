@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- ALT + SHIFT + F -->
+
+<head>
+    <!-- meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Maxwell's Log</title>
+    <meta name="description" content="What's Maxwell writing?">
+
+    <!-- style -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
+    <link rel="stylesheet" href="/style.css">
+
+    <!-- scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!--favicon-->
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+
+</head>
+
+<body>
+    <header class="container">
+        <hgroup>
+            <h1><a href="/">Maxwell's Log</a></h1>
+            <p>What's Maxwell writing?</p>
+        </hgroup>
+    </header>
+
+    <main class="container">
+        <section id="tableofcontents">
+            <div id="content">{{ .Content }}</div>
+        </section>
+
+    </main>
+
+    <footer class="container">
+        <small>Made poorly but with love - </small>
+        <small><a href="https://github.com/antonbriganti/maxwell-log">2ae52d6</a></small>
+    </footer>
+
+</body>
+
+</html>
