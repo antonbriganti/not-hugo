@@ -51,6 +51,12 @@ func markdownToHTML(mdContent string) (Metadata, string) {
 }
 
 func renderHtml(pd PageData) {
+	templates := []string{
+		"_templates/post.html",
+		"_templates/head.html",
+		"_templates/footer.html",
+	}
+
 	outputDir := "dist/" + pd.Filepath
 	err := os.MkdirAll(outputDir, 0755)
 	if err != nil {
@@ -65,10 +71,11 @@ func renderHtml(pd PageData) {
 	}
 	defer f.Close()
 
-	tmpl, err := template.ParseFiles("_templates/post.html")
+	tmpl, err := template.ParseFiles(templates...)
 	if err != nil {
 		log.Fatal(err)
 	}
+	
 	if err := tmpl.Execute(f, pd); err != nil {
 		log.Fatal(err)
 	}
