@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
 	"go.abhg.dev/goldmark/frontmatter"
@@ -31,7 +32,7 @@ func markdownToHTML(mdContent string) (Metadata, string) {
 	var buf bytes.Buffer
 
 	// create new goldmark parser using the frontmatter extension and unsafe HTML rendering (risky but I trust me)
-	md := goldmark.New(goldmark.WithExtensions(&frontmatter.Extender{}), goldmark.WithRendererOptions(html.WithUnsafe()))
+	md := goldmark.New(goldmark.WithExtensions(&frontmatter.Extender{}, extension.Strikethrough), goldmark.WithRendererOptions(html.WithUnsafe()))
 	ctx := parser.NewContext()
 
 	// convert markdown string into html
