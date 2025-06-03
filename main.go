@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/yuin/goldmark"
@@ -88,6 +89,7 @@ func renderHtml(pd PageData) {
 }
 
 func main() {
+	re := regexp.MustCompile(`^.*?-`)
 	err := filepath.Walk("md", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -107,8 +109,8 @@ func main() {
 			filename := strings.TrimSuffix(info.Name(), filepath.Ext(info.Name()))
 			var filepath string
 
-			if meta.Layout == "post" {
-				filename = filename[3:]
+			if meta.Layout != "index" {
+				filename = re.ReplaceAllString(filename, "")
 				filepath += meta.Layout
 			}
 
