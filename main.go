@@ -53,13 +53,11 @@ func markdownToHTML(mdContent string) (Metadata, string) {
 }
 
 func renderHtml(pd PageData) {
-	// Base templates
 	templates := []string{
 		"_templates/head.html",
 		"_templates/footer.html",
 	}
 
-	// Add layout-specific template based on pd.Layout
 	layoutTemplate := fmt.Sprintf("_templates/%s.html", pd.Layout)
 	templates = append(templates, layoutTemplate)
 
