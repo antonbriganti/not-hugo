@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{{ template "head" . }}
+
+<body>
+    <header class="container">
+        <hgroup>
+            <h1><a href="/">Maxwell's Log</a></h1>
+            <p>What's Maxwell writing?</p>
+        </hgroup>
+    </header>
+        
+    <main class="container">
+        <section id="preview">
+            <h2>{{.Title}}</h2>
+            <div id="content">{{.Content}}</div>
+        </section>
+    </main>
+
+    {{ template "footer" . }}
+
+</body>
+
+</html>
