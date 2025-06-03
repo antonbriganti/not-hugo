@@ -18,6 +18,7 @@ import (
 
 type PageData struct {
 	Title    string
+	Layout string
 	Filename string
 	Filepath string
 	Content  template.HTML
@@ -52,11 +53,15 @@ func markdownToHTML(mdContent string) (Metadata, string) {
 }
 
 func renderHtml(pd PageData) {
+	// Base templates
 	templates := []string{
-		"_templates/post.html",
 		"_templates/head.html",
 		"_templates/footer.html",
 	}
+
+	// Add layout-specific template based on pd.Layout
+	layoutTemplate := fmt.Sprintf("_templates/%s.html", pd.Layout)
+	templates = append(templates, layoutTemplate)
 
 	outputDir := "dist/" + pd.Filepath
 	err := os.MkdirAll(outputDir, 0755)
@@ -77,7 +82,7 @@ func renderHtml(pd PageData) {
 		log.Fatal(err)
 	}
 	
-	if err := tmpl.Execute(f, pd); err != nil {
+	if err := tmpl.ExecuteTemplate(f, pd.Layout+".html", pd); err != nil {
 		log.Fatal(err)
 	}
 
@@ -104,7 +109,7 @@ func main() {
 			filename := strings.TrimSuffix(info.Name(), filepath.Ext(info.Name()))
 			var filepath string
 
-			if meta.Layout == "entry" {
+			if meta.Layout == "post" {
 				filename = filename[3:]
 				filepath += meta.Layout
 			}
@@ -112,6 +117,7 @@ func main() {
 			// convert into PageData struct
 			data := PageData{
 				Title:   meta.Title,
+				Layout: meta.Layout,
 				Filename: filename,
 				Filepath: filepath,
 				Content: template.HTML(mdConverted),
