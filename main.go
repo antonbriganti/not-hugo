@@ -54,16 +54,22 @@ func markdownToHTML(mdContent string) (Metadata, string) {
 }
 
 func renderHtml(pd PageData) {
-	templates := []string{
-		"_templates/head.html",
-		"_templates/footer.html",
+	var templates []string
+	files, err := os.ReadDir("_templates/common")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, file := range files {
+		commonTemplateName := "_templates/common/" + file.Name()
+		templates = append(templates, commonTemplateName)
 	}
 
 	layoutTemplate := fmt.Sprintf("_templates/%s.html", pd.Layout)
 	templates = append(templates, layoutTemplate)
 
 	outputDir := "dist/" + pd.Filepath
-	err := os.MkdirAll(outputDir, 0755)
+	err = os.MkdirAll(outputDir, 0755)
 	if err != nil {
 		log.Fatal(err)
 	}
