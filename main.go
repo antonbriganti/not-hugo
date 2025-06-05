@@ -74,7 +74,7 @@ func renderHtml(pd PageData) {
 		log.Fatal(err)
 	}
 
-	outputFile := fmt.Sprintf("%s/%s.html", outputDir, pd.Filename)
+	outputFile := fmt.Sprintf("%s%s.html", outputDir, pd.Filename)
 
 	f, err := os.Create(outputFile)
 	if err != nil {
@@ -95,12 +95,14 @@ func renderHtml(pd PageData) {
 }
 
 func main() {
+	contentRootFolder := "md"
 	re := regexp.MustCompile(`^.*?-`)
-	err := filepath.Walk("md", func(path string, info os.FileInfo, err error) error {
+	
+	err := filepath.Walk(contentRootFolder, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-
+		
 		if !info.IsDir() {
 			// Read the markdown file
 			mdContent, err := os.ReadFile(path)
@@ -109,24 +111,24 @@ func main() {
 			}
 
 			// Convert markdown into html
-			meta, mdConverted := markdownToHTML(string(mdContent))
+			contentMetadata, contentHtml := markdownToHTML(string(mdContent))
 
-			// create filename + path
-			filename := strings.TrimSuffix(info.Name(), filepath.Ext(info.Name()))
-			var filepath string
-
-			if meta.Layout != "index" {
-				filename = re.ReplaceAllString(filename, "")
-				filepath += meta.Layout
+			// unholy methods to set up the correct paths for the website
+			relativePath, err := filepath.Rel(contentRootFolder, path)
+			if err != nil {
+				return err
 			}
+			fileName := re.ReplaceAllString(strings.TrimSuffix(info.Name(), filepath.Ext(info.Name())), "")
+			webPath := strings.TrimSuffix(relativePath, info.Name())
+			
 
 			// convert into PageData struct
 			data := PageData{
-				Title:   meta.Title,
-				Layout: meta.Layout,
-				Filename: filename,
-				Filepath: filepath,
-				Content: template.HTML(mdConverted),
+				Title:   contentMetadata.Title,
+				Layout: contentMetadata.Layout,
+				Filename: fileName,
+				Filepath: webPath,
+				Content: template.HTML(contentHtml),
 			}
 
 			// render the HTML
