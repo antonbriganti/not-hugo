@@ -1,10 +1,10 @@
-# not hugo 
+# !hugo 
 
-have you ever thought to yourself "I want to use Hugo but with a lot less functionality and also not as reusable"? 
+have you ever thought to yourself "I want to use Hugo but with less functionality **and** not as reusable"? 
 
-this repo is a learning task for how I can create a static site generator in golang. I was originally doing it with my repo [maxwell-log](https://github.com/antonbriganti/maxwell-log) in mind.
+it's made with my repo [maxwell-log](https://github.com/antonbriganti/maxwell-log) in mind but I guess it's probably built up enough that it can be used for other things. I would't recommend it for anyone who isn't me though.
 
-it's not going to change the world or anything but I learned something *and* I had fun. isn't that why we build things? 
+this started as a way for me to learn go, so the code is a bit 😬 but the fun has been 😍. and isn't that why we build things? 
 
 ## how does it work? 
 I am not kidding this is just like hugo but not as fully featured.
