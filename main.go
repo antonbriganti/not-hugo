@@ -19,32 +19,28 @@ import (
 
 type PageData struct {
 	Title    string
-	Layout string
+	Layout   string
 	Filename string
 	Filepath string
 	Content  template.HTML
 }
 
 type Metadata struct {
-	Title string `yaml:"title"`
+	Title  string `yaml:"title"`
 	Layout string `yaml:"layout"`
 }
 
 func markdownToHTML(mdContent string) (Metadata, string) {
 	var buf bytes.Buffer
 
-	// create new goldmark parser using the frontmatter extension and unsafe HTML rendering (risky but I trust me)
 	md := goldmark.New(goldmark.WithExtensions(&frontmatter.Extender{}, extension.Strikethrough), goldmark.WithRendererOptions(html.WithUnsafe()))
 	ctx := parser.NewContext()
 
-	// convert markdown string into html
 	if err := md.Convert([]byte(mdContent), &buf, parser.WithContext(ctx)); err != nil {
 		log.Fatal((err))
 	}
 
 	var meta Metadata
-
-	// decode frontmatter into metadata struct
 	d := frontmatter.Get(ctx)
 	if err := d.Decode(&meta); err != nil {
 		log.Fatal(err)
@@ -53,7 +49,7 @@ func markdownToHTML(mdContent string) (Metadata, string) {
 	return meta, buf.String()
 }
 
-func renderHtml(pd PageData) {
+func renderHtmlFile(pd PageData) {
 	var templates []string
 	files, err := os.ReadDir("_templates/common")
 	if err != nil {
@@ -86,7 +82,7 @@ func renderHtml(pd PageData) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	if err := tmpl.ExecuteTemplate(f, pd.Layout+".html", pd); err != nil {
 		log.Fatal(err)
 	}
@@ -95,44 +91,47 @@ func renderHtml(pd PageData) {
 }
 
 func main() {
+	// define outside of loop
 	contentRootFolder := "md"
-	re := regexp.MustCompile(`^.*?-`)
-	
+	re := regexp.MustCompile(`^.*?-`) 
+
 	err := filepath.Walk(contentRootFolder, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		
+
 		if !info.IsDir() {
-			// Read the markdown file
+			// load in file
 			mdContent, err := os.ReadFile(path)
 			if err != nil {
 				return err
 			}
 
-			// Convert markdown into html
+			// convert markdown - frontmatter -> metadata struct, content -> html 
 			contentMetadata, contentHtml := markdownToHTML(string(mdContent))
 
-			// unholy methods to set up the correct paths for the website
+			// create filename and path
+			// get relative path to root folder
 			relativePath, err := filepath.Rel(contentRootFolder, path)
 			if err != nil {
 				return err
 			}
+			// remove all numbers and dash that proceeds filename, remove the file extension 
 			fileName := re.ReplaceAllString(strings.TrimSuffix(info.Name(), filepath.Ext(info.Name())), "")
+			// relative path minus the file name inclusive of file extension 
 			webPath := strings.TrimSuffix(relativePath, info.Name())
-			
 
-			// convert into PageData struct
+			// put all the things used to render + save the html into a PageData struct 
 			data := PageData{
-				Title:   contentMetadata.Title,
-				Layout: contentMetadata.Layout,
+				Title:    contentMetadata.Title,
+				Layout:   contentMetadata.Layout,
 				Filename: fileName,
 				Filepath: webPath,
-				Content: template.HTML(contentHtml),
+				Content:  template.HTML(contentHtml),
 			}
 
-			// render the HTML
-			renderHtml(data)
+			// render + save the 
+			renderHtmlFile(data)
 
 		}
 		return nil
